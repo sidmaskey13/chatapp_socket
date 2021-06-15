@@ -22,7 +22,7 @@ const Chat = ({ location }) => {
         return () => {
             socket.emit('disconnect')
             socket.off()
-        }dawsaw
+        }
     }, [ENDPOINT, location.search])
 
     return (
