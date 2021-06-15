@@ -38,10 +38,10 @@ io.on('connection', (socket) => {
         console.log('user disconnected');
     });
 
-    socket.on('chat message', (msg) => {
-        console.log('message: ' + msg);
-        io.emit('chat message', msg);
-    });
+    // socket.on('chat message', (msg) => {
+    //     console.log('message: ' + msg);
+    //     io.emit('chat message', msg);
+    // });
 
     socket.on('join', ({ name, room }, callback) => {
         const { user } = addUser({ id: socket.id, name, room });
@@ -61,6 +61,7 @@ io.on('connection', (socket) => {
 
     socket.on('sendMessage', (message, callback) => {
         const user = getUser(socket.id)
+        console.log(message)
         io.to(user ? user.room : "").emit('message', { user: user ? user.name : "", text: message })
         callback();
     });

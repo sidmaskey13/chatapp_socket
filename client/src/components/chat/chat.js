@@ -17,7 +17,7 @@ const Chat = ({ location }) => {
     useEffect(() => {
         const { name, room } = queryString.parse(location.search);
 
-        socket = io(ENDPOINT);
+        socket = io(ENDPOINT, { transports: ['websocket', 'polling', 'flashsocket'] });
 
         setRoom(room);
         setName(name)
@@ -33,8 +33,8 @@ const Chat = ({ location }) => {
         socket.on('message', message => {
             setMessages(messages => [...messages, message]);
         });
-    }, [messages]);
 
+    }, []);
 
     const sendMessage = (event) => {
         event.preventDefault();
