@@ -49,6 +49,7 @@ const Chat = ({ location }) => {
     return (
         <div>
             <h1>Chat</h1>
+            <ul>{messages ? messages.map(i => <li key={i}>{i.user}: {i.text}</li>) : "No messages"}</ul>
             <input
                 type="text"
                 value={message}

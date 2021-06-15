@@ -35,33 +35,28 @@ const { addUser, removeUser, getUser, getUserInRoom } = require('./users')
 io.on('connection', (socket) => {
     console.log('a user connected');
     socket.on('disconnect', () => {
-        console.log('user disconnected');
-    });
+        const user = removeUser(socket.id);
 
-    // socket.on('chat message', (msg) => {
-    //     console.log('message: ' + msg);
-    //     io.emit('chat message', msg);
-    // });
+        if (user) {
+            io.to(user.room).emit('message', { user: 'Admin', text: `${user.name} has left.` });
+            io.to(user.room).emit('roomData', { room: user.room, users: getUserInRoom(user.room) });
+        }
+    });
 
     socket.on('join', ({ name, room }, callback) => {
         const { user } = addUser({ id: socket.id, name, room });
-        // if (error) return callback(error)
-        console.log(user)
-        // console.log(name)
-        // console.log(room)
-        // console.log(socket)
-        // console.log(socket.id)
+        if (user) {
+            socket.emit('message', { user: 'admin', text: `${user.name},Welcome to the room ${user.room}` });
+            socket.broadcast.to(user.room).emit('message', { user: 'admin', text: `${user.name} has joined the room ${user.room}` });
 
-        socket.emit('message', { user: 'admin', text: `${user.name},Welcome to the room ${user.room}` });
-        socket.broadcast.to(user.room).emit('message', { user: 'admin', text: `${user.name} has joined the room ${user.room}` });
+            socket.join(user.room)
+        }
 
-        socket.join(user.room)
         callback();
     });
 
     socket.on('sendMessage', (message, callback) => {
         const user = getUser(socket.id)
-        console.log(message)
         io.to(user ? user.room : "").emit('message', { user: user ? user.name : "", text: message })
         callback();
     });
