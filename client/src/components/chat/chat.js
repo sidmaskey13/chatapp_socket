@@ -12,6 +12,7 @@ const Chat = ({ location }) => {
     const [room, setRoom] = useState("")
     const [message, setMessage] = useState("")
     const [messages, setMessages] = useState([])
+    const [users, setUsers] = useState([]);
     const ENDPOINT = 'localhost:4000'
 
     useEffect(() => {
@@ -34,6 +35,12 @@ const Chat = ({ location }) => {
             setMessages(messages => [...messages, message]);
         });
 
+        socket.on("roomData", ({ users }) => {
+            setUsers(users);
+            console.log(users)
+        });
+        console.log(users)
+
     }, []);
 
     const sendMessage = (event) => {
@@ -49,6 +56,8 @@ const Chat = ({ location }) => {
     return (
         <div>
             <h1>Chat</h1>
+            Current online {users ? users.map(i => <p>{i.name}</p>) : ""}
+            {name ? <h5>Welcome {name}</h5> : ""}
             <ul>{messages ? messages.map(i => <li key={i}>{i.user}: {i.text}</li>) : "No messages"}</ul>
             <input
                 type="text"
