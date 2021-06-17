@@ -9,8 +9,7 @@ function Dashboard() {
 
     return (
         <div>
-            <h1>Welcome to Chat app</h1>
-            <Join />
+            <h1>Login for chat</h1>
         </div>
     )
 }

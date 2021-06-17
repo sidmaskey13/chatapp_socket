@@ -17,17 +17,17 @@ import Footer from './components/layout/Footer';
 import { loadLoggedInUser } from "./redux/auth/api";
 import Chat from './components/chat/chat';
 
-// export const SERVER_URL = "http://localhost:4000/api";
-export const SERVER_URL = "https://mern-blog-node-server.herokuapp.com/api";
+export const SERVER_URL = "http://localhost:4000/api";
+// export const SERVER_URL = "https://mern-blog-node-server.herokuapp.com/api";
 
 function App() {
   const dispatch = useDispatch()
   const user = useSelector(state => state.auth.user)
   const isAuthenticated = useSelector(state => state.auth.isAuthenticated)
 
-  // useEffect(() => {
-  //   if (!user) if (isAuthenticated) dispatch(loadLoggedInUser())
-  // }, [])
+  useEffect(() => {
+    if (!user) if (isAuthenticated) dispatch(loadLoggedInUser())
+  }, [])
 
   return (
     <Router>

@@ -8,6 +8,9 @@ const queryString = require('query-string');
 let socket;
 
 const Chat = ({ location }) => {
+    const user = useSelector(state => state.auth.user)
+    console.log(user)
+
     const [name, setName] = useState("")
     const [room, setRoom] = useState("")
     const [message, setMessage] = useState("")
@@ -16,14 +19,14 @@ const Chat = ({ location }) => {
     const ENDPOINT = 'localhost:4000'
 
     useEffect(() => {
-        const { name, room } = queryString.parse(location.search);
+        const { room } = queryString.parse(location.search);
 
         socket = io(ENDPOINT, { transports: ['websocket', 'polling', 'flashsocket'] });
 
         setRoom(room);
-        setName(name)
+        setName(user ? user.name : "")
 
-        socket.emit('join', { name, room }, (error) => {
+        socket.emit('join', { user_id: user ? user._id : "", name: user ? user.name : "", room }, (error) => {
             if (error) {
                 alert(error);
             }
@@ -57,7 +60,7 @@ const Chat = ({ location }) => {
         <div>
             <h1>Chat</h1>
             Current online {users ? users.map(i => <p>{i.name}</p>) : ""}
-            {name ? <h5>Welcome {name}</h5> : ""}
+            {name ? <h5>Welcome {user ? user.name : ""}</h5> : ""}
             <ul>{messages ? messages.map(i => <li key={i}>{i.user}: {i.text}</li>) : "No messages"}</ul>
             <input
                 type="text"

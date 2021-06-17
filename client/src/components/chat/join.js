@@ -10,9 +10,9 @@ function Join() {
     return (
         <div>
             <h1>Join</h1>
-            <input type="text" placeholder="Name" onChange={e => setName(e.target.value)} value={name} />
+            {/* <input type="text" placeholder="Name" onChange={e => setName(e.target.value)} value={name} /> */}
             <input type="text" placeholder="Room" onChange={e => setRoom(e.target.value)} value={room} />
-            <Link onClick={e => (!name || !room) ? e.preventDefault() : null} to={`/chat?name=${name}&room=${room}`}>
+            <Link onClick={e => (!room) ? e.preventDefault() : null} to={`/chat?room=${room}`}>
                 <Button type="submit">Submit</Button>
             </Link>
         </div >

@@ -1,6 +1,5 @@
 const httpStatus = require('http-status');
 const userSchema = require('./userSchema')
-const postSchema = require('../posts/postschema')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const jwtKey = process.env.JWT_PRIVATE_KEY
@@ -96,43 +95,20 @@ userController.allUsers = async (req, res, next) => {
         selectQuery = { name: 1, email: 1, userType: 1 }
         sortQuery = { createdAt: -1 }
 
-        let userPostsCount = await postSchema.aggregate([
-            {
-                $match: { is_active: "true" }
-            },
-            {
-                $group: {
-                    _id: '$user',
-                    total: { "$sum": 1 }
-                }
-            }
-        ])
+        let userdata = await otherHelper.getQuerySendResponse(userSchema, page, size, sortQuery, searchQuery, selectQuery, next, populate);
 
-
-
-        let post = await otherHelper.getQuerySendResponse(userSchema, page, size, sortQuery, searchQuery, selectQuery, next, populate);
-
-        let data = post.data
-
-        // for (let i = 0; i < data.length; i++) {
-        //     let totalCount = userPostsCount.find(x => JSON.stringify(x._id) == JSON.stringify(data[i]._id))
-        //     if (totalCount) {
-        //         data[i].totalPost = totalCount.total;
-        //     }
-        // }
-
-        return otherHelper.paginationSendResponse(res, httpStatus.OK, true, { userlist: data, postcount: userPostsCount }, 'All Post Retrieved', page, size, post.totalData);
+        return otherHelper.paginationSendResponse(res, httpStatus.OK, true, userdata.data, 'All Users Retrieved', page, size, userdata.totalData);
     } catch (error) {
         next(error);
     }
 };
 
-userController.loadLoggedInUser = async (req, res, next) => {
+userController.loadLoggedInUser = (req, res, next) => {
     try {
-        const user = await checkLoggedInUserData(req)
+        const user = checkLoggedInUserData(req)
         return otherHelper.sendResponse(res, httpStatus.OK, true, user, null, 'Login User detail', null);
-    } catch (error) {
-        next(error);
+    } catch (err) {
+        next(err);
     }
 };
 
@@ -153,9 +129,8 @@ function generateAuthToken() {
     return token;
 }
 
-async function checkLoggedInUserData(req) {
-    const user_id = req.user.user._id
-    const user = await userSchema.findById(user_id).select('_id name email userType').lean()
+function checkLoggedInUserData(req) {
+    const user = req.user.user
     return user
 }
 
