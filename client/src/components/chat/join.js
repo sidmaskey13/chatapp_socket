@@ -3,6 +3,7 @@ import { Button, Checkbox, Form } from 'semantic-ui-react'
 import { useDispatch, useSelector } from "react-redux";
 import { Link, Redirect } from "react-router-dom";
 import { fetchAllRooms } from '../../redux/room/api'
+import { setRoomDetails } from '../../redux/room/action'
 
 function Join() {
     const roomList = useSelector(state => state.rooms.roomList)

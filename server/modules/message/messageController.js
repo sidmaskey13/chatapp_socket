@@ -29,7 +29,7 @@ messageController.getAllMessageUser = async (req, res, next) => {
 messageController.getAllMessageRoom = async (req, res, next) => {
     try {
         const room_id = req.params.id
-        const messages = await messageSchema.find({ room: room_id }).lean()
+        const messages = await messageSchema.find({ room: room_id }).populate([{ path: 'sender', select: 'name' }, { path: 'room', select: 'name' }]).lean()
         return otherHelper.sendResponse(res, httpStatus.OK, true, messages, null, 'All Message of given Room Retrieved', null);
     } catch (err) {
         next(err);
