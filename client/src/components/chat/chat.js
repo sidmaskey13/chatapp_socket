@@ -22,15 +22,17 @@ const Chat = ({ location }) => {
     const ENDPOINT = 'localhost:4000'
     const room_id = queryString.parse(location.search).room;
     const user_id = user ? user._id : ""
+    const user_name = user ? user.name : ""
 
     useEffect(() => {
 
         socket = io(ENDPOINT, { transports: ['websocket', 'polling', 'flashsocket'] });
 
         setRoom(room_id);
+        console.log("room_id is", room_id)
         setName(user ? user.name : "")
 
-        socket.emit('join', { user_id: user ? user._id : "", name: user ? user.name : "", room }, (error) => {
+        socket.emit('join', { user_id: user_id, name: user_name, room: room_id }, (error) => {
             if (error) {
                 alert(error);
             }
