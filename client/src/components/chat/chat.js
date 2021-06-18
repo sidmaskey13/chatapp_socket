@@ -11,10 +11,8 @@ let socket;
 const Chat = ({ location }) => {
     const user = useSelector(state => state.auth.user)
     const apiMessages = useSelector(state => state.messages.messages)
-    // console.log(apiMessages)
 
     const dispatch = useDispatch()
-    // console.log(user)
 
     const [name, setName] = useState("")
     const [room, setRoom] = useState("")
@@ -40,17 +38,24 @@ const Chat = ({ location }) => {
     }, [ENDPOINT, location.search]);
 
     useEffect(() => {
+        dispatch(fetchMessagesRoom(room_id))
+
+        console.log('apiMessages1: ', apiMessages)
+
         socket.on('message', message => {
             setMessages(messages => [...messages, message]);
         });
 
         socket.on("roomData", ({ users }) => {
             setUsers(users);
-            console.log(users)
         });
-        console.log(users)
 
     }, []);
+
+    useEffect(() => {
+        apiMessages.map(i => messages.push({ user: i.sender ? i.sender.name : "User", text: i.text }))
+        console.log(messages)
+    }, [apiMessages.length]);
 
     const sendMessage = (event) => {
         event.preventDefault();
@@ -60,13 +65,14 @@ const Chat = ({ location }) => {
         }
     }
 
+
     return (
         <div>
             <h1>Chat</h1>
             Current online {users ? users.map(i => <p>{i.name}</p>) : ""}
             {name ? <h5>Welcome {user ? user.name : ""}</h5> : ""}
             {/* <ul>{apiMessages ? apiMessages.map(i => <li key={i}>{i.sender.name}: {i.text}</li>) : "No messages"}</ul> */}
-            <ul>{messages ? messages.map(i => <li key={i}>{i.user}: {i.text}</li>) : "No messages"}</ul>
+            <ul>{messages ? messages.map(i => <li key={i}>{i.user}:: {i.text}</li>) : "No messages"}</ul>
             <input
                 type="text"
                 value={message}
